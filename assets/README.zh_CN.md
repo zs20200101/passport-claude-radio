@@ -39,3 +39,27 @@
 - 与当前 BSP 音频路径匹配时优先采用 16 kHz、16 位单声道 PCM。
 - 嵌入音频前评估 Flash 与内部 RAM 成本；长录音应流式或分块。
 - 无再分发许可不提交媒体文件。
+
+### Claude 电台字库
+
+`fonts/NotoSansSC-VF.ttf` 来自 Google Fonts 的 `ofl/notosanssc`，
+许可是 `fonts/OFL.txt`（SIL OFL 1.1）。源文件 SHA256：
+`a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da`。
+所有电台字体均使用真正的 **700 粗体**实例。源可变字体默认字重为 100，
+直接转换会得到细体。`fonts/passport_font_16.c` 保留完整的 16 px、2 bpp、
+未压缩中文字库。`fonts/passport_font_dashboard.c` 是行高 19 px 的紧凑主页
+字库（16 px、4 bpp），覆盖应用中文、ASCII、温度和标点，并向完整字库
+回退以支持动态城市和电台名称。`fonts/passport_font_14.c` 包含粗体 ASCII
+和主页按键提示；`fonts/passport_font_40.c` 提供粗体时钟数字。
+`main/radio_font_title.c` 提供 20 px、4 bpp 的电台标题，也向完整字库回退。
+这些资源由 `main/CMakeLists.txt` 编译。
+
+运行 `python -m pip install fonttools==4.60.1`，然后执行
+`python tools/generate_radio_font.py` 可复现（需要 Node/npm，lv_font_conv
+固定为 1.5.3）。生成器检查源字体哈希，使用 fontTools 临时生成字重 700
+的静态实例，再转换全部五种字库。完整字库覆盖 ASCII 0x20-0x7e、0xb0、
+0xb7、标点 0x3000-0x303f 与 0xff01-0xff60、汉字 0x4e00-0x9fff。
+转换器跳过源字体不存在的字符；界面对不支持的字符（包括 emoji）明确显示 `?`。
+完整位图大于 1 MiB，必须启用 `CONFIG_LV_FONT_FMT_TXT_LARGE`。
+`tests/test_radio_font.py` 检查覆盖范围和紧凑字库的行高。
+实际显示与运行堆内存仍需单独验收。

@@ -1,5 +1,7 @@
 [English](/docs/README.md) · **简体中文**
 
+[Passport Claude Radio 安装说明](../README.zh_CN.md) · [分享安装页面](https://zs20200101.github.io/passport-claude-radio/install/)
+
 <h1 align="center">FoloToy AI PASSPORT</h1>
 
 <p align="center">
@@ -27,6 +29,7 @@
   <a href="/docs/reference/README.zh_CN.md">社区作品</a> ·
   <a href="#文档索引">开发文档</a>
 </p>
+| [Claude 局域网电台](../tools/claude_lan_bridge/README.zh_CN.md) | 电脑配置、USB 配对、无线权限、日历天气和验证 |
 
 ---
 
@@ -214,3 +217,5 @@ LICENSE                  仓库许可证
 [参与贡献](../.github/CONTRIBUTING.zh_CN.md) · [获取帮助](../.github/SUPPORT.zh_CN.md) · [行为准则](../.github/CODE_OF_CONDUCT.zh_CN.md) · [安全说明](../.github/SECURITY.zh_CN.md) · [MIT 许可证](../LICENSE)
 
 AI 助手请从 [`AGENTS.md`](../AGENTS.md) 开始，再按任务路由读取相关文档。
+
+- [发布 ZIP 安装](../tools/distribution/README.zh_CN.md)

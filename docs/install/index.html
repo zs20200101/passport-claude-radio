@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Passport Claude Radio · 安装</title>
+<style>body{font:17px/1.8 system-ui,sans-serif;max-width:860px;margin:auto;padding:28px;color:#172b3a;background:#f4f7fa}main{background:white;padding:30px;border-radius:18px}h1{line-height:1.3}a{color:#075db5}.btn{display:inline-block;padding:10px 20px;background:#075db5;color:white;border-radius:8px;text-decoration:none;margin:6px 8px 6px 0}code{background:#eef2f6;padding:2px 5px;overflow-wrap:anywhere}aside{border-left:4px solid #db8e00;padding:10px 18px;background:#fff7e8}li{margin:12px 0}small{overflow-wrap:anywhere}</style>
+<main><p>FoloToy AI Passport · ESP32-C3 · 8 MB</p><h1>广播、时钟与 Claude Code<br>放在 Passport 上</h1>
+<p>昆明／城市电台、央广、广东、凤凰资讯；网络定位天气、日期农历；Claude Code 提示时暂停广播，上键批准、下键拒绝。</p>
+<p><a class="btn" href="https://github.com/zs20200101/passport-claude-radio/releases/download/v1.0.0-claude-radio/Passport-Claude-Radio-v1.0.0.zip">下载安装包 v1.0.0</a><a class="btn" href="https://ai-passport.folotoy.cn/tools/web-flasher/" target="_blank" rel="noopener">打开网页烧录工具</a></p>
+<aside>首次安装完整镜像可能重置 Wi-Fi 和配对设置。每位使用者需要自己的 Passport、USB 数据线和电脑；设备使用 2.4 GHz Wi-Fi。安装包没有预置密码或密钥。</aside>
+<h2>1 · 烧录 Passport</h2><ol><li>下载并解压安装包。用 USB 数据线连接设备，关闭占用串口的软件。</li><li>在电脑 Chrome／Edge 中打开网页烧录工具并授权串口，选择 <code>firmware/FoloToy-AI-Passport-full.bin</code>，从 <strong>0x0</strong> 写入。该工具由 Passport 官网提供。</li><li>重启设备。用手机连接设备的 <code>LEO Radio</code> 热点，打开 <code>http://192.168.4.1</code>，选择与电脑同一局域网的 2.4 GHz Wi-Fi，输入自己的密码。</li></ol>
+<h2>2 · 运行电脑端</h2><p>安装 Python 3.10 或以上，在解压目录打开 PowerShell：</p><pre><code>python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r tools/claude_lan_bridge/requirements.txt
+.\.venv\Scripts\python.exe tools/claude_lan_bridge/setup.py
+.\.venv\Scripts\python.exe tools/claude_lan_bridge/bridge.py --config "$env:LOCALAPPDATA\PassportClaude\config.json"</code></pre>
+<p>凤凰资讯还需要单独安装带 <code>libmp3lame</code> 的 FFmpeg，并确认桥接进程的 PATH 能找到 <code>ffmpeg</code>。桥接需持续运行。天气根据电脑的网络出口定位，VPN 可能影响城市。</p>
+<h2>3 · USB 配对与可选批准功能</h2><p>另开 PowerShell，把示例 COM5 和 192.168.1.10 换成自己的设备串口、电脑局域网 IPv4：</p><pre><code>.\.venv\Scripts\python.exe tools/claude_lan_bridge/setup.py --serial COM5 --host 192.168.1.10</code></pre>
+<p>设备显示“Claude 已连接”后可拔 USB 无线使用。建议路由器固定电脑 IP；防火墙如阻止 TCP 8765，仅放行可信私有局域网。先确认配对正常，再选择启用：</p><pre><code>.\.venv\Scripts\python.exe tools/claude_lan_bridge/setup.py --install-hook</code></pre>
+<p>重启 Claude Code 会话。仅能控制触发 PermissionRequest hook 的 Code 会话，普通聊天和 Windows 弹窗不适用。真实 Claude Desktop hook 分发仍需使用者实测。移除对应 Passport hook 可恢复原权限流程。</p>
+<h2>按键</h2><p>主页：单击上／下调音量，双击上／下换台，确定播放／暂停，长按确定进设置。权限提示：单击上批准、下拒绝。</p>
+<h2>升级与验证</h2><p>已有本项目、分区一致时，可只将 <code>firmware/FoloToy-AI-Passport.bin</code> 写到 <strong>0x10000</strong> 保留兼容配置，切勿写到 0x0。完整镜像 SHA256：</p><small>71ac40b4a0f10beed7560d90a8c12287d22e14fed459f5d726ce5ec28a48a1ee</small>
+<p>这份固件与已验收设备版本一致。已验证主页按键、显示、凤凰声音与模拟权限打断恢复；尚未验证所有电台和长期稳定性。网络和音源中断仍可能造成停播。权限 HTTP 有签名但不加密，仅用于可信局域网。</p>
+<p><a href="https://github.com/zs20200101/passport-claude-radio/blob/main/README.zh_CN.md">完整中文说明</a> · <a href="https://github.com/zs20200101/passport-claude-radio/blob/main/tools/claude_lan_bridge/README.zh_CN.md">电脑端详细配置</a> · <a href="https://github.com/zs20200101/passport-claude-radio">公开源码</a> · <a href="https://github.com/zs20200101/passport-claude-radio/releases/latest">版本与校验文件</a> · <a href="https://github.com/zs20200101/passport-claude-radio/blob/main/README.md">English</a></p></main></html>

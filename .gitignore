@@ -11,3 +11,15 @@ managed_components/
 /.agents/skills/passport-build
 /.agents/skills/passport-device-test
 /.agents/skills/passport-debug
+
+build_claude/
+__pycache__/
+*.pyc
+
+.venv/
+
+# Private runtime configuration must never be part of a public backup.
+.env
+.env.*
+PassportClaude/
+tools/claude_lan_bridge/config.json

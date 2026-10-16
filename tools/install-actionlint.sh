@@ -11,6 +11,11 @@ if [[ -x "${destination}/actionlint" ]]; then
     exit 0
 fi
 
+if [[ -x "${destination}/actionlint.exe" ]]; then
+    printf '%s\n' "${destination}/actionlint.exe"
+    exit 0
+fi
+
 case "${system_name}/${machine_name}" in
     Linux/x86_64)
         platform="linux_amd64"
@@ -28,6 +33,10 @@ case "${system_name}/${machine_name}" in
         platform="darwin_arm64"
         checksum="aba9ced2dee8d27fecca3dc7feb1a7f9a52caefa1eb46f3271ea66b6e0e6953f"
         ;;
+    MINGW*/x86_64|MSYS*/x86_64)
+        platform="windows_amd64"
+        checksum="6e7241b51e6817ea6a047693d8e6fed13b31819c9a0dd6c5a726e1592d22f6e9"
+        ;;
     *)
         echo "Unsupported actionlint platform: ${system_name}/${machine_name}" >&2
         exit 1
@@ -35,6 +44,9 @@ case "${system_name}/${machine_name}" in
 esac
 
 archive_name="actionlint_${version}_${platform}.tar.gz"
+if [[ "${platform}" == windows_* ]]; then
+    archive_name="actionlint_${version}_${platform}.zip"
+fi
 archive_path="${destination}/${archive_name}"
 download_url="https://github.com/rhysd/actionlint/releases/download/v${version}/${archive_name}"
 
@@ -57,6 +69,12 @@ else
     echo "No SHA-256 verification tool is available" >&2
     exit 1
 fi
-tar -xzf "${archive_path}" -C "${destination}" actionlint
-chmod +x "${destination}/actionlint"
-printf '%s\n' "${destination}/actionlint"
+if [[ "${platform}" == windows_* ]]; then
+    "${PYTHON:-python3}" -c 'import sys,zipfile; zipfile.ZipFile(sys.argv[1]).extract("actionlint.exe",sys.argv[2])' "${archive_path}" "${destination}"
+    chmod +x "${destination}/actionlint.exe"
+    printf '%s\n' "${destination}/actionlint.exe"
+else
+    tar -xzf "${archive_path}" -C "${destination}" actionlint
+    chmod +x "${destination}/actionlint"
+    printf '%s\n' "${destination}/actionlint"
+fi

@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "PermissionRequest": [{"matcher": "", "hooks": [{
+      "type": "command",
+      "command": "<absolute python.exe path>",
+      "args": ["<absolute permission_hook.py path>", "--config", "<private config.json path>"],
+      "timeout": 140
+    }]}]
+  }
+}

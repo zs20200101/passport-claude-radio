@@ -26,5 +26,8 @@ jobs:
           actionlint_bin="$(./tools/install-actionlint.sh "$RUNNER_TEMP/actionlint")"
           echo "ACTIONLINT_BIN=${actionlint_bin}" >> "$GITHUB_ENV"
 
+      - name: Install companion test dependencies
+        run: python3 -m pip install -r tools/claude_lan_bridge/requirements.txt
+
       - name: Validate repository and run host tests
         run: ./tools/validate.sh --static

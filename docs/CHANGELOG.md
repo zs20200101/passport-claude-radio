@@ -12,6 +12,14 @@
 
 ## Unreleased
 
+## v1.0.0-claude-radio - 2026-10-16
+
+- First application release: bold clock/date/lunar/network weather, Kunming/city/CNR/Guangdong/Phoenix radio, signed Claude Code LAN approval and radio interruption/resume.
+- Single UP/DOWN adjusts volume; double UP/DOWN changes station. Added bounded audio buffering and fixed-source Phoenix conversion; Hong Kong and StoryFM are removed.
+- Publish the hardware-accepted binary with checksums, companion source and installation instructions. Full-image installation may reset stored settings; compatible app-only upgrades use 0x10000.
+
+## Upstream baseline notes (pending review)
+
 - Added the supplied 80-byte CW2017 profile for the specified 520 mAh cell, including content/update-flag checks, verified writes, the required restart sequence, and bounded SOC-readiness polling.
 
 - Expanded the environment bootstrap document: added Espressif's Git service mirror (`git.espressif.com.cn`) as the preferred mainland-China route for ESP-IDF v5.5.3 and its submodules, documented submodule long-wait/timeout handling, in-place repair, and the pinned-commit shallow fetch for large submodules such as `esp32-wifi-lib`, warned about stale per-repository Jihulab `insteadOf` residue, and added the official offline release archive as a last-resort fallback (learned from `esp-mosaico/esp-mosaico-vibe`).

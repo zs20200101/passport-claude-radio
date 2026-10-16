@@ -4,6 +4,10 @@
 
 #include "esp_err.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // 按键索引。数量用 bsp_pins.h 的 BSP_BTN_COUNT(硬件属性,归引脚表管),
 // 这里不再定义尾项计数,避免出现 BSP_BTN_COUNT / BSP_BTN_COUNT_ 两个近似名字。
 typedef enum {
@@ -45,3 +49,7 @@ esp_err_t bsp_button_prepare_deep_sleep(int *level);
 // ★ 换了分压/上拉阻值后,用它测出自己的三档电压,再改 bsp_pins.h 的 BSP_BTN_MV_TABLE。
 // 读取失败返回 -1。
 int bsp_button_read_mv(void);
+
+#ifdef __cplusplus
+}
+#endif

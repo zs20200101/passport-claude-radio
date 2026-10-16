@@ -2,18 +2,17 @@
   <strong>简体中文</strong> · <a href="CI-build-and-release.md">English</a>
 </p>
 
-# 自动构建与发布（CI / Build & Release）
+# 构建与人工发布
 
-本仓库提供一套基于 GitHub Actions 的自动构建与发布流水线，用于在打 tag 时自动编译固件并发布 Release。
+本应用分支的 `.github/workflows/build-firmware.yml` 仅支持手动运行，产生候选构建产物。分支与标签推送不会触发此工作流；独立的 firmware-checks 仍检查 main 推送。发布负责人检查源码输入和哈希后，通过 GitHub Releases 人工发布已验收的固件，防止 CI 重新构建覆盖实机验收版本。
 
-本文件与 `.github/workflows/build-firmware.yml` 一同维护，工作流行为变化时必须同步更新。
+构建使用 ESP-IDF 5.5.3／ESP32-C3，运行 `./tools/validate.sh --firmware`，验证合并镜像并上传候选产物。Actions 固定为完整提交 SHA，构建权限为 `contents: read`，不再自动创建 Release。
 
 ## 触发条件
 
-- **push tag**：当向仓库推送 tag（如 `v1.0.0`、`v0.1.0-feature/xxx`）时触发自动构建，并在构建成功后自动创建 Release（带固件产物）。
 - **workflow_dispatch**：可在 GitHub Actions 页面手动触发（用于调试/预发布验证）。
 
-> 平时 push 到分支（非 tag）**不会**触发构建；只有打 tag 才会。
+> 分支和 tag 推送都不触发本工作流。发布负责人人工上传通过审核和验收的固件。
 
 ## 流水线做了什么
 
@@ -21,9 +20,9 @@
 2. **编译与验证**（ESP-IDF 5.5.3 / esp32c3）：运行与本地相同的 `./tools/validate.sh --firmware`。脚本使用 `sdkconfig.defaults` 和 `partitions.csv` 构建固件，再执行 `idf.py merge-bin`。
 3. **验证完整固件**：脚本按 `flash_args` 生成的实际偏移逐字节确认 bootloader、partition-table 和 app，确认使用 8 MB Flash，并检查当前配置的分区布局，最后输出 `build/FoloToy-AI-Passport-full.bin`。仓库默认偏移为 `0x0`、`0x8000` 和 `0x10000`；用户自定义分区表时可以改变 app 偏移。
 4. **上传 artifact**：每次成功构建都上传 `FoloToy-AI-Passport-full.bin`。普通分支只有从该分支手动运行 `workflow_dispatch` 才会构建；普通 push 不触发。
-5. **发布 tag**：tag 构建完成后，独立 release job 下载上述 artifact，并创建 GitHub Release。
+5. **人工发布**：源码、固件哈希和验收结果核对后，负责人创建带安装包的 GitHub Release。
 
-构建 job 只有 `contents: read` 权限；仅 release job 在 tag 发布时获得 `contents: write`。所有 Action 均固定到完整 commit SHA，行尾注释保留对应发布版本，升级时需同时核对 SHA 与版本。
+构建 job 只有 `contents: read` 权限；没有自动写入 Release 的 job。所有 Action 均固定到完整 commit SHA，行尾注释保留对应发布版本，升级时需同时核对 SHA 与版本。
 
 ## 产物
 
@@ -45,7 +44,7 @@
 - **Tag 命名约定**：按 `v<版本>-<应用名>` 小写连字符命名，例如 `v0.1.0-voice-keychain`、
   `v1.0.0-pocket-pomodoro`。`<应用名>` 是该 Release 构建的应用（见
   相对仓库根目录的 `docs/reference/<username>/<app-name>/` 档案命名）。多应用共享同一棵树时，只写版本号的 tag 会有歧义。
-- **发布成功后，核对 Release 标题**：workflow 会把标题设为 tag 名，因此命名正确的 tag 本身就显示成
+- **发布成功后，核对 Release 标题**：发布负责人将标题设为 tag 名，因此命名正确的 tag 本身就显示成
   `v0.1.0-voice-keychain`。若 tag 没带应用名，或标题一眼看不出是哪个应用，就编辑该 Release
   （GitHub：`Edit release`；GitLab：编辑 tag），让标题为 `<版本> <应用名>`，例如 `v0.1.0 Voice
   Keychain`。快速扫一遍 Release 列表，就能区分每个 Release 是哪个应用。
@@ -66,7 +65,7 @@
 
 ## Release 说明
 
-tag 触发的 Release 只有在合并固件与它的 Release 说明一起发布时才完整。发布 Release 后，要写一份
+人工审核的 Release 只有在合并固件与它的 Release 说明一起发布时才完整。发布 Release 后，要写一份
 说明，向可能没读过仓库的用户解释这次构建。覆盖三块：
 
 - **功能（What's new / 功能）**：本次 Release 相对上一版新增或变更的功能、行为或修复。面向用户，

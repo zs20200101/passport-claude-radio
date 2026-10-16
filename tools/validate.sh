@@ -11,8 +11,14 @@ usage() {
 run_static_checks() {
     local actionlint_bin
     local test_dir
+    local demo_link_flags=()
+    # PE/COFF ld retains unresolved references in unused demo UI sections.
+    # LTO removes that unreachable code before linking the same runtime tests.
+    case "$(uname -s)" in
+        MINGW*|MSYS*|CYGWIN*) demo_link_flags=(-flto -O1) ;;
+    esac
 
-    python3 tools/check_repo.py
+    "${PYTHON:-python3}" tools/check_repo.py
 
     actionlint_bin="${ACTIONLINT_BIN:-}"
     if [[ -z "${actionlint_bin}" ]]; then
@@ -59,23 +65,52 @@ run_static_checks() {
     "${test_dir}/test_bsp_audio_recovery"
     for demo in audio low_power ble wifi; do
         "${CC:-cc}" -std=c11 -Wall -Wextra -Werror \
-            -ffunction-sections -fdata-sections -Itests/demo_stubs -Imain \
+            "${demo_link_flags[@]}" -ffunction-sections -fdata-sections -Itests/demo_stubs -Imain \
             "tests/test_demo_${demo}_runtime.c" -Wl,--gc-sections \
             -o "${test_dir}/test_demo_${demo}_runtime"
         "${test_dir}/test_demo_${demo}_runtime"
     done
-    PYTHONDONTWRITEBYTECODE=1 python3 tests/test_deep_sleep_contract.py
-    PYTHONDONTWRITEBYTECODE=1 python3 tests/test_key_wake_contract.py
-    PYTHONDONTWRITEBYTECODE=1 python3 tests/test_check_repo.py
-    PYTHONDONTWRITEBYTECODE=1 python3 tests/test_verify_firmware.py
-    PYTHONDONTWRITEBYTECODE=1 python3 tests/test_archive_firmware.py
-    PYTHONDONTWRITEBYTECODE=1 python3 tests/test_install_passport_skills.py
+    PYTHONDONTWRITEBYTECODE=1 "${PYTHON:-python3}" tests/test_deep_sleep_contract.py
+    PYTHONDONTWRITEBYTECODE=1 "${PYTHON:-python3}" tests/test_key_wake_contract.py
+    PYTHONDONTWRITEBYTECODE=1 "${PYTHON:-python3}" tests/test_check_repo.py
+    PYTHONDONTWRITEBYTECODE=1 "${PYTHON:-python3}" tests/test_verify_firmware.py
+    PYTHONDONTWRITEBYTECODE=1 "${PYTHON:-python3}" tests/test_archive_firmware.py
+    PYTHONDONTWRITEBYTECODE=1 "${PYTHON:-python3}" tests/test_install_passport_skills.py
+    "${CXX:-c++}" -std=c++17 -Wall -Wextra -Werror -Imain \
+        tests/test_claude_protocol.cc main/claude_protocol.cc \
+        -o "${test_dir}/test_claude_protocol"
+    "${test_dir}/test_claude_protocol"
+    PYTHONDONTWRITEBYTECODE=1 "${PYTHON:-python3}" tests/test_claude_bridge.py
+    "${CXX:-c++}" -std=c++17 -Wall -Wextra -Werror -Imain \
+        tests/test_radio_city.cc -o "${test_dir}/test_radio_city"
+    "${test_dir}/test_radio_city"
+    "${CXX:-c++}" -std=c++17 -Wall -Wextra -Werror -Itests/bsp_stubs -Icomponents/bsp/include -Imain \
+        tests/test_radio_home_controls.cc -o "${test_dir}/test_radio_home_controls"
+    "${test_dir}/test_radio_home_controls"
+    "${CXX:-c++}" -std=c++17 -Wall -Wextra -Werror -Imain \
+        tests/test_radio_buffer.cc -o "${test_dir}/test_radio_buffer"
+    "${test_dir}/test_radio_buffer"
+    "${CXX:-c++}" -std=c++17 -Wall -Wextra -Werror -Imain \
+        tests/test_radio_media.cc main/radio_media.cc -o "${test_dir}/test_radio_media"
+    "${test_dir}/test_radio_media"
+    "${CXX:-c++}" -std=c++17 -Wall -Wextra -Werror -Itests/radio_http_stubs -Imain \
+        tests/test_radio_http.cc -o "${test_dir}/test_radio_http"
+    "${test_dir}/test_radio_http"
+    PYTHONDONTWRITEBYTECODE=1 "${PYTHON:-python3}" tests/test_radio_relay.py
+    PYTHONDONTWRITEBYTECODE=1 "${PYTHON:-python3}" tests/test_radio_font.py
     rm -rf "${test_dir}"
     echo "Host tests: PASS"
 }
 
 run_firmware_checks() (
     local validation_build_dir
+
+    case "$(uname -s)" in
+        MINGW*|MSYS*|CYGWIN*)
+            "${PYTHON:-python3}" tools/validate_firmware_windows.py
+            return
+            ;;
+    esac
 
     if ! command -v idf.py >/dev/null 2>&1; then
         echo "ERROR: idf.py is not available; activate ESP-IDF 5.5.3 first." >&2
@@ -90,8 +125,8 @@ run_firmware_checks() (
         -D "SDKCONFIG=${validation_build_dir}/sdkconfig" build
     idf.py -B "${validation_build_dir}" merge-bin \
         -o "${validation_build_dir}/FoloToy-AI-Passport-full.bin"
-    python3 tools/verify_firmware.py "${validation_build_dir}"
-    PYTHONDONTWRITEBYTECODE=1 python3 tools/archive_firmware.py create \
+    "${PYTHON:-python3}" tools/verify_firmware.py "${validation_build_dir}"
+    PYTHONDONTWRITEBYTECODE=1 "${PYTHON:-python3}" tools/archive_firmware.py create \
         "${validation_build_dir}" --archive-root "${repo_root}/build/firmware"
     mkdir -p "${repo_root}/build"
     install -m 0644 \

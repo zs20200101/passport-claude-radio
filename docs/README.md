@@ -1,5 +1,7 @@
 **English** · [简体中文](/docs/README.zh_CN.md)
 
+[Passport Claude Radio installation](../README.md) · [Shareable installer](https://zs20200101.github.io/passport-claude-radio/install/)
+
 <h1 align="center">FoloToy AI PASSPORT</h1>
 
 <p align="center">
@@ -27,6 +29,7 @@
   <a href="/docs/reference/README.md">Community projects</a> ·
   <a href="#documentation-index">Documentation</a>
 </p>
+| [Claude LAN radio](../tools/claude_lan_bridge/README.md) | PC setup, USB pairing, wireless permissions, calendar/weather and validation |
 
 ---
 
@@ -220,3 +223,5 @@ provide reference material. Choose the entry that matches your task.
 [Contribute](../.github/CONTRIBUTING.md) · [Get help](../.github/SUPPORT.md) · [Code of conduct](../.github/CODE_OF_CONDUCT.md) · [Security](../.github/SECURITY.md) · [MIT License](../LICENSE)
 
 AI agents: start with [`AGENTS.md`](../AGENTS.md) and follow its task-specific routing.
+
+- [Release ZIP installation](../tools/distribution/README.md)

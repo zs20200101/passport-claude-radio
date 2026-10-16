@@ -41,3 +41,30 @@ Store reusable music and sound-effect sources in `music/`.
 - Prefer 16 kHz, 16-bit mono PCM when it matches the current BSP audio path.
 - Check Flash and internal-RAM cost before embedding audio; stream or chunk long recordings.
 - Do not commit media without redistribution permission.
+
+### Claude radio font
+
+`fonts/NotoSansSC-VF.ttf` comes from Google Fonts `ofl/notosanssc`, covered by
+`fonts/OFL.txt` (SIL OFL 1.1). Source SHA256:
+`a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da`.
+All radio fonts use a real **700 Bold** instance of this variable font. The
+source's default weight is 100; converting it directly produces thin text.
+`fonts/passport_font_16.c` retains the full 16 px, 2 bpp, uncompressed CJK font.
+`fonts/passport_font_dashboard.c` supplies a compact 16 px, 4 bpp face with a
+19 px line height, covering application Chinese text plus ASCII, temperature
+and punctuation. It falls back to the full font for dynamic names.
+`fonts/passport_font_14.c` contains bold ASCII and the home-screen control hints;
+`fonts/passport_font_40.c` contains bold clock digits. `main/radio_font_title.c`
+provides the 20 px, 4 bpp station-title face, also with full-font fallback.
+These assets are compiled by `main/CMakeLists.txt`.
+
+Reproduce with `python -m pip install fonttools==4.60.1`, then
+`python tools/generate_radio_font.py` (Node/npm required; lv_font_conv pinned to
+1.5.3). The generator hash-checks the licensed source and creates a temporary
+static weight-700 instance with fontTools before converting all five faces.
+The full font covers ASCII 0x20-0x7e, 0xb0, 0xb7, punctuation 0x3000-0x303f
+and 0xff01-0xff60, and CJK 0x4e00-0x9fff. The converter omits absent source
+glyphs; the UI explicitly substitutes `?` for unsupported characters, including
+emoji. Enable `CONFIG_LV_FONT_FMT_TXT_LARGE` because the full bitmap exceeds
+1 MiB. Coverage and compact-face metrics are checked in `tests/test_radio_font.py`.
+Device rendering and runtime heap remain separate acceptance checks.

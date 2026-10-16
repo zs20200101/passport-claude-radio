@@ -1,16 +1,25 @@
 idf_component_register(
-    SRCS "main.c"
-         "demo_navigation.c"
-         "ui_pixel.c"
-         "ui_pixel_math.c"
-         "demo_display.c"
-         "demo_button.c"
-         "demo_audio.c"
-         "demo_battery.c"
-         "demo_radio.c"
-         "demo_wifi.c"
-         "demo_ble.c"
-         "demo_low_power.c"
+    SRCS "main.cc" "claude_protocol.cc" "claude_bridge.cc" "radio_catalog.cc" "radio_display_settings.cc"
+         "radio_player.cc" "radio_media.cc" "radio_sleep_timer.cc"
+         "radio_ui.cc"
+         "../assets/fonts/passport_font_16.c" "../assets/fonts/passport_font_dashboard.c"
+         "../assets/fonts/passport_font_14.c" "../assets/fonts/passport_font_40.c" "radio_font_title.c" "fap_screenshot.c"
     INCLUDE_DIRS "."
-    REQUIRES bsp bt esp_event esp_hw_support esp_netif esp_timer esp_wifi nvs_flash
+    REQUIRES
+        bsp
+        nvs_flash
+        esp_http_client
+        esp_wifi
+        esp_netif
+        esp_event
+        esp_timer
+        esp_lcd
+        esp_partition
+        esp_rom
+        spi_flash
+        mbedtls
+        json
+        esp_audio_codec
+        esp_driver_usb_serial_jtag
+        esp-wifi-connect
 )

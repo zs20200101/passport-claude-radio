@@ -52,3 +52,5 @@ Compare file SHA256 values with `SHA256SUMS.txt` using `Get-FileHash`. The packa
 Each user creates a private configuration and a new pairing key. No credentials, NVS, logs or debug files are shared. HMAC authenticates approval messages; LAN HTTP is not encrypted. Use trusted networks, never expose the bridge port publicly. Network IP location can be inaccurate or reflect VPN egress. Radio sources and services may become unavailable. Physical controls, display, Phoenix audio and synthetic interruption/resume passed; actual Desktop hook dispatch, every station and endurance remain unverified.
 
 MIT application licenses and font OFL notices are included. Broadcast content remains its providers' property. For the full bilingual design/build guide, see [the project](https://github.com/zs20200101/passport-claude-radio).
+
+The source manifest records separate SHA256 values for the exact Windows build inputs and committed Git bytes; CRLF/LF differences are checked after line-ending normalization.

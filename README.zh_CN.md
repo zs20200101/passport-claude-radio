@@ -42,3 +42,5 @@ Build：PASS（复用已验证构建）。Host tests：PASS。Device tests：PAS
 ## 来源与许可证
 
 基于 [leo0183/leo-radio](https://github.com/leo0183/leo-radio) 和 [FoloToy AI Passport](https://gitee.com/FoloToy/ai-passport)。MIT 源码许可：[FoloToy](LICENSE)、[leo-radio](LICENSES/leo-radio.txt)、[esp-wifi-connect](LICENSES/esp-wifi-connect.txt)。字体使用 [Noto Sans SC，SIL OFL 1.1](assets/fonts/OFL.txt)。节目内容属于对应提供方；本项目发布播放器和公开源地址，不分发节目录音。见[依赖说明](LICENSES/README.zh_CN.md)。
+
+源码清单分别记录实机构建输入字节和 Git 提交字节的 SHA256；Windows CRLF 与 Git LF 的差异经过逐文件归一化核对。

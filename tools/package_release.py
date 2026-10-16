@@ -33,10 +33,15 @@ def main():
     source = json.loads(args.source_manifest.read_text(encoding="utf-8"))
     if source["full_image_sha256"] != record["full_bin_sha256"]:
         raise SystemExit("Source manifest belongs to a different firmware")
+    git_hashes = {}
     for name, expected in source["source_sha256"].items():
         file = (ROOT/name).resolve()
         if not file.is_relative_to(ROOT) or not file.is_file() or digest(file.read_bytes()) != expected:
             raise SystemExit("Firmware source mismatch: "+name)
+        committed = subprocess.check_output(["git", "show", "HEAD:"+name], cwd=ROOT)
+        if committed.replace(b"\r\n", b"\n") != file.read_bytes().replace(b"\r\n", b"\n"):
+            raise SystemExit("Committed source mismatch: "+name)
+        git_hashes[name] = digest(committed)
     # Explicit input whitelist: never copy local configs, logs, NVS, ELF or MAP files.
     entries = {}
     for name in ("FoloToy-AI-Passport-full.bin", "FoloToy-AI-Passport.bin"):
@@ -54,6 +59,9 @@ def main():
             entries[file.relative_to(ROOT).as_posix()] = file.read_bytes()
     # These keys contain hashes and relative paths only, unlike private delivery records.
     public_source = {key: source[key] for key in ("project_version", "idf_version", "full_image_sha256", "source_sha256")}
+    public_source["source_commit"] = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    public_source["git_blob_sha256"] = git_hashes
+    public_source["line_endings"] = "source_sha256 hashes exact Windows build inputs; git_blob_sha256 hashes committed bytes. Differences must be CRLF/LF only."
     entries["source-inputs.json"] = encoded(public_source)
     release = {"schema_version": 1, "release": TAG, "target": record["target"],
                "flash_size_bytes": record["flash_size_bytes"],

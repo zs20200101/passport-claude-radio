@@ -42,3 +42,5 @@ Build: PASS (reused verified build). Host tests: PASS. Device tests: PASS for ho
 ## Credits and license
 
 Application based on [leo0183/leo-radio](https://github.com/leo0183/leo-radio) and [FoloToy AI Passport](https://gitee.com/FoloToy/ai-passport). MIT source licenses: [FoloToy](LICENSE), [leo-radio](LICENSES/leo-radio.txt), [esp-wifi-connect](LICENSES/esp-wifi-connect.txt). Fonts: [Noto Sans SC, SIL OFL 1.1](assets/fonts/OFL.txt). Broadcast content belongs to its providers; this project distributes a player and public source references, not recordings. See [dependency notices](LICENSES/README.md).
+
+The source manifest records separate SHA256 values for the exact Windows build inputs and committed Git bytes; CRLF/LF differences are checked after line-ending normalization.

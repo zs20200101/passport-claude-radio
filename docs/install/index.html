@@ -5,6 +5,9 @@
 <main><p>FoloToy AI Passport · ESP32-C3 · 8 MB</p><h1>广播、时钟与 Claude Code<br>放在 Passport 上</h1>
 <p>昆明／城市电台、央广、广东、凤凰资讯；网络定位天气、日期农历；Claude Code 提示时暂停广播，上键批准、下键拒绝。</p>
 <p><a class="btn" href="https://github.com/zs20200101/passport-claude-radio/releases/download/v1.0.0-claude-radio/Passport-Claude-Radio-v1.0.0.zip">下载安装包 v1.0.0</a><a class="btn" href="https://ai-passport.folotoy.cn/tools/web-flasher/" target="_blank" rel="noopener">打开网页烧录工具</a></p>
+<details><summary>GitHub 下载超时时，使用官方备用接口</summary><p>在电脑 PowerShell 运行以下命令，将安装包保存到当前目录：</p><pre><code>Invoke-WebRequest -Headers @{Accept="application/octet-stream"} `
+  -Uri "https://api.github.com/repos/zs20200101/passport-claude-radio/releases/assets/647030397" `
+  -OutFile "Passport-Claude-Radio-v1.0.0.zip"</code></pre><p>安装包 SHA256：<small>0facad869907993021bee561b1b0f6443816c245ca7f149f9fe7a3aa70d2e4b6</small>。备用入口同样由 GitHub 提供，无需登录。</p></details>
 <aside>首次安装完整镜像可能重置 Wi-Fi 和配对设置。每位使用者需要自己的 Passport、USB 数据线和电脑；设备使用 2.4 GHz Wi-Fi。安装包没有预置密码或密钥。</aside>
 <h2>1 · 烧录 Passport</h2><ol><li>下载并解压安装包。用 USB 数据线连接设备，关闭占用串口的软件。</li><li>在电脑 Chrome／Edge 中打开网页烧录工具并授权串口，选择 <code>firmware/FoloToy-AI-Passport-full.bin</code>，从 <strong>0x0</strong> 写入。该工具由 Passport 官网提供。</li><li>重启设备。用手机连接设备的 <code>LEO Radio</code> 热点，打开 <code>http://192.168.4.1</code>，选择与电脑同一局域网的 2.4 GHz Wi-Fi，输入自己的密码。</li></ol>
 <h2>2 · 运行电脑端</h2><p>安装 Python 3.10 或以上，在解压目录打开 PowerShell：</p><pre><code>python -m venv .venv
